@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "7d728196-804b-4237-8034-d92aa16c5f18",
+		"_postman_id": "5c96f919-136c-4035-96be-87242e239fc0",
 		"name": "LabFinalGrupo01",
 		"description": "Set de pruebas del laboratorio final de la unidad IV.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -50,26 +50,44 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"var uf=pm.globals.get(\"uf\");\r",
-							"pm.test(\"codigo estado 200\", function () {\r",
+							"var uf = pm.globals.get(\"uf\");\r",
+							"pm.test(\"Estado 200\", function () {\r",
 							"    pm.response.to.have.status(200);\r",
 							"});\r",
-							"var tiempo = parseInt(pm.globals.get(\"tiemporespuesta\"));\r",
-							"pm.test(\"Response time is less than \"+tiempo+\" ms\", function () {\r",
+							"\r",
+							"var tiempo = 1000;\r",
+							"pm.test(`Response time is less than ${tiempo} ms`, function () {\r",
 							"    pm.expect(pm.response.responseTime).to.be.below(tiempo);\r",
 							"});\r",
-							"pm.test(\"Valida Impuesto esperado\", function () {\r",
+							"\r",
+							"var dxcEsperado = data.dxcEsperado;\r",
+							"if (data.dxcEsperado == 'AHORRO') {\r",
+							"    dxcEsperado = data.ahorro;\r",
+							"} else if (data.dxcEsperado == '35UF') {\r",
+							"    dxcEsperado = parseInt(uf * 35);\r",
+							"} else if (data.dxcEsperado == '150UF') {\r",
+							"    dxcEsperado = parseInt(uf * 150);\r",
+							"}\r",
+							"\r",
+							"pm.test(\"Valida 10% Esperado\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData.impuesto).to.eql(data.impuestoesperado);\r",
+							"    pm.expect(jsonData.dxc).to.eql(dxcEsperado)\r",
 							"});\r",
+							"\r",
+							"var impuestoPorcentaje = typeof data.impuestoPorcentaje == 'number' ? data.impuestoPorcentaje : parseFloat(data.impuestoPorcentaje.replace(',','.'));\r",
+							"var impuestoEsperado = parseInt(impuestoPorcentaje * dxcEsperado);\r",
+							"console.log(impuestoEsperado);\r",
+							"pm.test(\"Valida Impuesto Esperado\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.impuesto).to.eql(impuestoEsperado);\r",
+							"});\r",
+							"\r",
+							"var saldoEsperado = data.ahorro - dxcEsperado;\r",
 							"pm.test(\"Valida Saldo esperado\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData.saldo).to.eql(data.saldoesperado)\r",
+							"    pm.expect(jsonData.saldo).to.eql(saldoEsperado)\r",
 							"});\r",
-							"pm.test(\"Valida 10% esperado\", function () {\r",
-							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData.saldo).to.eql(data.dxcesperado)\r",
-							"});\r",
+							"\r",
 							""
 						],
 						"type": "text/javascript"
@@ -80,7 +98,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8089/rest/msdxc/dxc?sueldo={{sueldo}}&ahorro={{ahorro}}&uf={{uf}}",
+					"raw": "http://localhost:8089/rest/msdxc/dxc?sueldo={{sueldo}}&ahorro={{ahorro}}",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -99,10 +117,6 @@
 						{
 							"key": "ahorro",
 							"value": "{{ahorro}}"
-						},
-						{
-							"key": "uf",
-							"value": "{{uf}}"
 						}
 					]
 				},
