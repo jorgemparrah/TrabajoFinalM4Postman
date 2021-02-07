@@ -1,0 +1,114 @@
+{
+	"info": {
+		"_postman_id": "7d728196-804b-4237-8034-d92aa16c5f18",
+		"name": "LabFinalGrupo01",
+		"description": "Set de pruebas del laboratorio final de la unidad IV.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "DxC_ObtieneUF",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Obtiene UF\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    var ufvalor=jsonData.uf.valor;\r",
+							"    pm.globals.set(\"uf\",ufvalor);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://mindicador.cl/api/",
+					"protocol": "https",
+					"host": [
+						"mindicador",
+						"cl"
+					],
+					"path": [
+						"api",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DxC",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var uf=pm.globals.get(\"uf\");\r",
+							"pm.test(\"codigo estado 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"var tiempo = parseInt(pm.globals.get(\"tiemporespuesta\"));\r",
+							"pm.test(\"Response time is less than \"+tiempo+\" ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(tiempo);\r",
+							"});\r",
+							"pm.test(\"Valida Impuesto esperado\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.impuesto).to.eql(data.impuestoesperado);\r",
+							"});\r",
+							"pm.test(\"Valida Saldo esperado\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.saldo).to.eql(data.saldoesperado)\r",
+							"});\r",
+							"pm.test(\"Valida 10% esperado\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.saldo).to.eql(data.dxcesperado)\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8089/rest/msdxc/dxc?sueldo={{sueldo}}&ahorro={{ahorro}}&uf={{uf}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8089",
+					"path": [
+						"rest",
+						"msdxc",
+						"dxc"
+					],
+					"query": [
+						{
+							"key": "sueldo",
+							"value": "{{sueldo}}"
+						},
+						{
+							"key": "ahorro",
+							"value": "{{ahorro}}"
+						},
+						{
+							"key": "uf",
+							"value": "{{uf}}"
+						}
+					]
+				},
+				"description": "\t * Método para cacular el impuesto a pagar.\r\n\t * Las reglas de negocio se pueden conocer en\r\n\t   https://www.previsionsocial.gob.cl/sps/preguntas-frecuentes-nuevo-retiro-seguro-10/"
+			},
+			"response": []
+		}
+	]
+}
