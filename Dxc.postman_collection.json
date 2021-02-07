@@ -1,25 +1,82 @@
 {
 	"info": {
-		"_postman_id": "75e343f7-e2e1-43af-8cb3-934307b2884d",
-		"name": "Dxc",
+		"_postman_id": "7d728196-804b-4237-8034-d92aa16c5f18",
+		"name": "LabFinalGrupo01",
+		"description": "Set de pruebas del laboratorio final de la unidad IV.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "Dxc",
+			"name": "DxC_TengoSaldo",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Diez x Ciento\", () => {",
-							"  const responseJson = pm.response.json();",
-							"  pm.expect(responseJson.ahorro).to.eql(5000000);",
-							"  pm.expect(responseJson.dxc).to.eql(1000000);",
-							"});",
-							"",
-							"pm.test(\"Codigo de estado 200\", () => {",
-							"  pm.response.to.have.status(200);",
+							"pm.test(\"codigo status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"var tiempo = parseInt(pm.globals.get(\"tiemporespuesta\"));\r",
+							"pm.test(\"Response time is less than \"+tiempo+\" ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(tiempo);\r",
+							"});\r",
+							"pm.test(\"Tengo saldo ?\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.saldo).to.eql(data.saldoesperado)\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8089/rest/msdxc/dxc?sueldo={{sueldo}}&ahorro={{ahorro}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8089",
+					"path": [
+						"rest",
+						"msdxc",
+						"dxc"
+					],
+					"query": [
+						{
+							"key": "sueldo",
+							"value": "{{sueldo}}"
+						},
+						{
+							"key": "ahorro",
+							"value": "{{ahorro}}"
+						}
+					]
+				},
+				"description": "Verificar si tengo saldo, para retirar 10%"
+			},
+			"response": []
+		},
+		{
+			"name": "DxC_TengoQuePagarImpuesto",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"codigo estado 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"var tiempo = parseInt(pm.globals.get(\"tiemporespuesta\"));\r",
+							"pm.test(\"Response time is less than \"+tiempo+\" ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(tiempo);\r",
+							"});\r",
+							"pm.test(\"Impuesto Mayor que 0\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.impuesto).to.eql(data.impuestoesperado);\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -30,12 +87,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/rest/msdxc/dxc?ahorro=5000000&sueldo=1000000",
+					"raw": "http://localhost:8089/rest/msdxc/dxc?sueldo={{sueldo}}&ahorro={{ahorro}}",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "8080",
+					"port": "8089",
 					"path": [
 						"rest",
 						"msdxc",
@@ -43,15 +100,16 @@
 					],
 					"query": [
 						{
-							"key": "ahorro",
-							"value": "5000000"
+							"key": "sueldo",
+							"value": "{{sueldo}}"
 						},
 						{
-							"key": "sueldo",
-							"value": "1000000"
+							"key": "ahorro",
+							"value": "{{ahorro}}"
 						}
 					]
-				}
+				},
+				"description": "\t * Método para cacular el impuesto a pagar.\r\n\t * Las reglas de negocio se pueden conocer en\r\n\t   https://www.previsionsocial.gob.cl/sps/preguntas-frecuentes-nuevo-retiro-seguro-10/"
 			},
 			"response": []
 		}
