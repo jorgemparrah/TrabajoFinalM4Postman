@@ -1,29 +1,24 @@
 {
 	"info": {
-		"_postman_id": "7d728196-804b-4237-8034-d92aa16c5f18",
+		"_postman_id": "5c96f919-136c-4035-96be-87242e239fc0",
 		"name": "LabFinalGrupo01",
 		"description": "Set de pruebas del laboratorio final de la unidad IV.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "DxC_TengoSaldo",
+			"name": "DxC_ObtieneUF",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"codigo status 200\", function () {\r",
-							"    pm.response.to.have.status(200);\r",
-							"});\r",
-							"var tiempo = parseInt(pm.globals.get(\"tiemporespuesta\"));\r",
-							"pm.test(\"Response time is less than \"+tiempo+\" ms\", function () {\r",
-							"    pm.expect(pm.response.responseTime).to.be.below(tiempo);\r",
-							"});\r",
-							"pm.test(\"Tengo saldo ?\", function () {\r",
+							"pm.test(\"Obtiene UF\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData.saldo).to.eql(data.saldoesperado)\r",
+							"    var ufvalor=jsonData.uf.valor;\r",
+							"    pm.globals.set(\"uf\",ufvalor);\r",
 							"});\r",
+							"\r",
 							""
 						],
 						"type": "text/javascript"
@@ -34,50 +29,66 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8089/rest/msdxc/dxc?sueldo={{sueldo}}&ahorro={{ahorro}}",
-					"protocol": "http",
+					"raw": "https://mindicador.cl/api/",
+					"protocol": "https",
 					"host": [
-						"localhost"
+						"mindicador",
+						"cl"
 					],
-					"port": "8089",
 					"path": [
-						"rest",
-						"msdxc",
-						"dxc"
-					],
-					"query": [
-						{
-							"key": "sueldo",
-							"value": "{{sueldo}}"
-						},
-						{
-							"key": "ahorro",
-							"value": "{{ahorro}}"
-						}
+						"api",
+						""
 					]
-				},
-				"description": "Verificar si tengo saldo, para retirar 10%"
+				}
 			},
 			"response": []
 		},
 		{
-			"name": "DxC_TengoQuePagarImpuesto",
+			"name": "DxC",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"codigo estado 200\", function () {\r",
+							"var uf = pm.globals.get(\"uf\");\r",
+							"pm.test(\"Estado 200\", function () {\r",
 							"    pm.response.to.have.status(200);\r",
 							"});\r",
-							"var tiempo = parseInt(pm.globals.get(\"tiemporespuesta\"));\r",
-							"pm.test(\"Response time is less than \"+tiempo+\" ms\", function () {\r",
+							"\r",
+							"var tiempo = 1000;\r",
+							"pm.test(`Response time is less than ${tiempo} ms`, function () {\r",
 							"    pm.expect(pm.response.responseTime).to.be.below(tiempo);\r",
 							"});\r",
-							"pm.test(\"Impuesto Mayor que 0\", function () {\r",
+							"\r",
+							"var dxcEsperado = data.dxcEsperado;\r",
+							"if (data.dxcEsperado == 'AHORRO') {\r",
+							"    dxcEsperado = data.ahorro;\r",
+							"} else if (data.dxcEsperado == '35UF') {\r",
+							"    dxcEsperado = parseInt(uf * 35);\r",
+							"} else if (data.dxcEsperado == '150UF') {\r",
+							"    dxcEsperado = parseInt(uf * 150);\r",
+							"}\r",
+							"\r",
+							"pm.test(\"Valida 10% Esperado\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData.impuesto).to.eql(data.impuestoesperado);\r",
-							"});"
+							"    pm.expect(jsonData.dxc).to.eql(dxcEsperado)\r",
+							"});\r",
+							"\r",
+							"var impuestoPorcentaje = typeof data.impuestoPorcentaje == 'number' ? data.impuestoPorcentaje : parseFloat(data.impuestoPorcentaje.replace(',','.'));\r",
+							"var impuestoEsperado = parseInt(impuestoPorcentaje * dxcEsperado);\r",
+							"console.log(impuestoEsperado);\r",
+							"pm.test(\"Valida Impuesto Esperado\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.impuesto).to.eql(impuestoEsperado);\r",
+							"});\r",
+							"\r",
+							"var saldoEsperado = data.ahorro - dxcEsperado;\r",
+							"pm.test(\"Valida Saldo esperado\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.saldo).to.eql(saldoEsperado)\r",
+							"});\r",
+							"\r",
+							""
 						],
 						"type": "text/javascript"
 					}
