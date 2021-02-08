@@ -1,4 +1,4 @@
-# Laboratorio 4 - Grupo 1 - Frontend
+# Laboratorio 4 - Grupo 1 - Postman
 
 ### Instalar NPM
 Ir a este enlace y seguir las instrucciones de acuerdo al Sistema Operativo:
@@ -20,10 +20,11 @@ Ejecutar en un terminal el siguiente comando:
 Los archivo que se encuentran en este repositorio son:
 
 **LabFinalGrupo01.postman_collection.json** : Colección de Postman con 2 request.
-- **DxC_ObtieneUF**: Obtiene la UF del dia y la guarda como variable global.
-- **DxC**: Ejecuta la prueba del microservicio utilizando la UF obtenida en el request anterior.
+- *Request 1* - **DxC_ObtieneUF**: Obtiene la UF del dia y la guarda como variable global.
+- *Request 2* - **DxC**: Ejecuta la prueba del microservicio utilizando la UF obtenida en el request anterior.
 
 **DataLabFinalGrupo01.csv** : Datos para las pruebas de Postman en formato CSV.
+
 Para cada fila del CSV se ejecutan los request anteriores.
 
 

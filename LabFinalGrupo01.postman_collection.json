@@ -59,7 +59,7 @@
 							"    pm.response.to.have.status(statusOk);\r",
 							"});\r",
 							"\r",
-							"var tiempo = 2000;\r",
+							"var tiempo = 15000;\r",
 							"pm.test(`ResponseTime menor a ${tiempo} ms`, function () {\r",
 							"    console.log(`[${pm.response.responseTime}] <= [${tiempo}]`);\r",
 							"    pm.expect(pm.response.responseTime).to.be.below(tiempo);\r",
